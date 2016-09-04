@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+sudo docker run -d --name PROM_CON_EXP \
+              -p 9104:9104 \
+              -v /sys/fs/cgroup:/cgroup \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              prom/container-exporter
+
+sudo docker run \
+  --volume=/:/rootfs:ro \
+  --volume=/var/run:/var/run:rw \
+  --volume=/sys:/sys:ro \
+  --volume=/var/lib/docker/:/var/lib/docker:ro \
+  --publish=8081:8080 \
+  --detach=true \
+  --name=cadvisor \
+  google/cadvisor:latest
+

@@ -80,4 +80,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+  config.vm.provision :shell, :name => 'prometheus', path: 'commands/setup/setup'
+
 end

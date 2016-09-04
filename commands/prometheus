@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+cd ~/binaries/alertmanager-0.4.1.linux-amd64
+screen -S alertmanager -dm ./alertmanager
+cd ~/binaries/prometheus-1.0.2.linux-amd64
+screen -S prometheus -dm ./prometheus -alertmanager.url=http://`ip addr show eth1 | grep inet\  | awk '{print $2}' | cut -d/ -f1`:9093

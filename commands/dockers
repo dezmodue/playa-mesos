@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+IP=$(ip addr show eth1 | grep inet\  | awk '{print $2}' | cut -d/ -f1)
+sudo docker run -d -p 9100:9100 --net="host" prom/node-exporter
+sudo docker run -d -p 5000:5000 -e MESOS_ENDPOINT="${IP}:5050"  capgemini/mesos-ui:standalone-latest
+

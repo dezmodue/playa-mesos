@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# create /var/lib/grafana as persistent volume storage
+sudo docker run -d -v /var/lib/grafana --name grafana-storage busybox:latest 2>&1
+
+# start grafana
+sudo docker run \
+  -d \
+  -p 3000:3000 \
+  --name=grafana \
+  --volumes-from grafana-storage \
+  grafana/grafana
