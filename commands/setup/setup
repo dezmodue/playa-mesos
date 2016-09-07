@@ -1,24 +1,35 @@
 #!/usr/bin/env bash
 sudo apt-get install -y vim screen
-mkdir ~/binaries
-cd ~/binaries
-wget https://github.com/prometheus/prometheus/releases/download/v1.0.2/prometheus-1.0.2.linux-amd64.tar.gz > /dev/null
-wget https://github.com/prometheus/alertmanager/releases/download/v0.4.1/alertmanager-0.4.1.linux-amd64.tar.gz > /dev/null
-wget https://github.com/prometheus/node_exporter/releases/download/0.12.0/node_exporter-0.12.0.linux-amd64.tar.gz > /dev/null
-wget https://storage.googleapis.com/golang/go1.7.linux-amd64.tar.gz > /dev/null
-tar xvfz go1.7.linux-amd64.tar.gz > /dev/null
-mkdir ~/go
-sudo mv go /usr/local
+[ -d /opt/binaries ] || mkdir /opt/binaries
+cd /opt/binaries
+echo "Downloading prometheus if needed..."
+[ -f prometheus-1.0.2.linux-amd64.tar.gz ] || wget --quiet https://github.com/prometheus/prometheus/releases/download/v1.0.2/prometheus-1.0.2.linux-amd64.tar.gz
+echo "Downloading alertmanager if needed..."
+[ -f alertmanager-0.4.1.linux-amd64.tar.gz ] || wget --quiet https://github.com/prometheus/alertmanager/releases/download/v0.4.1/alertmanager-0.4.1.linux-amd64.tar.gz
+echo "Downloading node_exporter if needed..."
+[ -f node_exporter-0.12.0.linux-amd64.tar.gz ] || wget --quiet https://github.com/prometheus/node_exporter/releases/download/0.12.0/node_exporter-0.12.0.linux-amd64.tar.gz
+echo "Downloading go if needed..."
+[ -f go1.7.linux-amd64.tar.gz ] || wget --quiet https://storage.googleapis.com/golang/go1.7.linux-amd64.tar.gz 
+echo "Extracting go"
+[ -d /opt/binaries/go ] || sudo tar xvfz go1.7.linux-amd64.tar.gz &> /dev/null
+[ -d ~/go ] || mkdir ~/go
+[ -d /usr/local/go ] || sudo mv /opt/binaries/go /usr/local
 export GOPATH=~/go
 export PATH=$PATH:/usr/local/go/bin
-echo 'export GOPATH=~/go' >> ~/.profile
-echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
+[[ `grep -c GOPATH ~/.profile` == 1 ]] || echo 'export GOPATH=~/go' >> ~/.profile
+[[ `grep -c '/usr/local/go/bin' ~/.profile` == 1 ]] || echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
 go get github.com/mesosphere/mesos-exporter
-tar xvfz prometheus-1.0.2.linux-amd64.tar.gz > /dev/null
-tar xvfz alertmanager-0.4.1.linux-amd64.tar.gz > /dev/null
-tar xvfz node_exporter-0.12.0.linux-amd64.tar.gz > /dev/null
-cp /vagrant/commands/setup/prometheus.yml ~/binaries/prometheus-1.0.2.linux-amd64/
-cp /vagrant/commands/setup/alertmanager.yml ~/binaries/alertmanager-0.4.1.linux-amd64/
+cd /opt/binaries
+echo "Extracting prometheus if needed..."
+[ -d /opt/binaries/prometheus-1.0.2.linux-amd64 ] || sudo tar xvfz prometheus-1.0.2.linux-amd64.tar.gz &> /dev/null
+echo "Extracting alertmanager if needed..."
+[ -d /opt/binaries/alertmanager-0.4.1.linux-amd64 ] || sudo tar xvfz alertmanager-0.4.1.linux-amd64.tar.gz &> /dev/null
+echo "Extracting node_exporter if needed..."
+[ -d /opt/binaries/node_exporter-0.12.0.linux-amd64 ] || sudo tar xvfz node_exporter-0.12.0.linux-amd64.tar.gz &> /dev/null
+echo "Copying configuration in place"
+sudo cp /vagrant/commands/setup/prometheus.yml /opt/binaries/prometheus-1.0.2.linux-amd64/
+sudo cp /vagrant/commands/setup/alertmanager.yml /opt/binaries/alertmanager-0.4.1.linux-amd64/
+sudo chown -R vagrant:vagrant /opt/binaries
 cd /vagrant/commands/
 ./prometheus
 ./containers-metrics 
