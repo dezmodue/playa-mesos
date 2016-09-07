@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+IP=`ip addr show eth1 | grep inet\  | awk '{print $2}' | cut -d/ -f1`
 echo "Logging in to grafana"
 COOKIE_JAR=$(mktemp)
 sleep 5
@@ -14,7 +15,17 @@ if [ $? -ne 0 ];then
   echo "Failed to update data sources"
 fi
 
-
-# TODO: This doesn't work:
+# TODO: This doesn't seem to work:
 #curl -XPOST -i --cookie "$COOKIE_JAR" http://localhost:3000/api/dashboards/db --data-binary @/vagrant/commands/dashboards/grafana_cadvisor.json -H "Content-Type: application/json"
 #curl -XPOST -i --cookie "$COOKIE_JAR" http://localhost:3000/api/dashboards/db --data-binary @/vagrant/commands/dashboards/grafana_prometheus.json -H "Content-Type: application/json"
+
+echo
+echo "***********************************"
+echo "***********************************"
+echo
+echo "Login to grafana (http://${IP}:3000) as admin/admin and import the dashboards in 'commands/dashboards/*.json'"
+echo
+echo "***********************************"
+echo "***********************************"
+
+

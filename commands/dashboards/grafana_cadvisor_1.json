@@ -1,6 +1,6 @@
 {
-  "id": 4,
-  "title": "Container Advisor",
+  "id": 2,
+  "title": "Container Advisor 1",
   "tags": [],
   "style": "dark",
   "timezone": "browser",
@@ -45,7 +45,7 @@
           "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
-          "percentage": true,
+          "percentage": false,
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -58,36 +58,40 @@
               "calculatedInterval": "2s",
               "datasourceErrors": {},
               "errors": {},
-              "expr": "100 - (sum(rate(container_cpu_system_seconds_total[1m])) by (image,instance) * 100)",
+              "expr": "100 * sum(rate(container_cpu_system_seconds_total{image=~\"$image\"}[1m])) by (image,instance)  ",
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "{{image}}.system",
               "metric": "",
               "prometheusLink": "http://core-1.cell-1.ofi.xnood.com:9191/graph#%5B%7B%22expr%22%3A%22container_cpu_usage_seconds_total%3Asum_rate_1m%3Aby_group%22%2C%22range_input%22%3A%223600s%22%2C%22end_input%22%3A%222015-8-26%207%3A41%22%2C%22step_input%22%3A%22%22%2C%22stacked%22%3Atrue%2C%22tab%22%3A0%7D%5D",
               "refId": "A",
-              "step": 4
+              "step": 4,
+              "hide": true
             },
             {
-              "expr": "sum(rate(container_cpu_user_seconds_total[1m])) by (image,instance)",
+              "expr": "100 * sum(rate(container_cpu_user_seconds_total{image=~\"$image\"}[1m])) by (image,instance)",
               "intervalFactor": 2,
               "legendFormat": "{{image}}.user",
               "refId": "B",
-              "step": 4
+              "step": 4,
+              "hide": true,
+              "interval": ""
             },
             {
-              "expr": "rate(container_cpu_user_seconds_total[1m])",
+              "expr": "100 * sum(rate(container_cpu_user_seconds_total{image=~\"$image\"}[1m])) by (image,instance) ",
+              "hide": false,
               "intervalFactor": 2,
               "refId": "C",
               "step": 4,
-              "hide": true
+              "legendFormat": "{{image}}.total"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Cluster cumulative CPU time spent by containers (in seconds per minute)",
+          "title": "Cluster CPU per image - total",
           "tooltip": {
             "msResolution": false,
-            "shared": true,
+            "shared": false,
             "sort": 0,
             "value_type": "individual"
           },
@@ -155,9 +159,9 @@
               "calculatedInterval": "2s",
               "datasourceErrors": {},
               "errors": {},
-              "expr": "container_cpu_system_seconds_total:sum_rate_1m:by_group",
+              "expr": "100 * sum(rate(container_cpu_system_seconds_total{image=~\"$image\"}[1m])) by (image,instance)  ",
               "intervalFactor": 2,
-              "legendFormat": "{{group}}",
+              "legendFormat": "{{image}}",
               "metric": "",
               "prometheusLink": "http://core-1.cell-1.ofi.xnood.com:9191/graph#%5B%7B%22expr%22%3A%22container_cpu_system_seconds_total%3Asum_rate_1m%3Aby_group%22%2C%22range_input%22%3A%223600s%22%2C%22end_input%22%3A%222015-8-26%207%3A41%22%2C%22step_input%22%3A%22%22%2C%22stacked%22%3Atrue%2C%22tab%22%3A0%7D%5D",
               "refId": "A",
@@ -166,12 +170,12 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "CPU time spent in kernel by containers (in seconds per minute)",
+          "title": "CPU time spent in kernel by containers (%)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
             "sort": 0,
-            "value_type": "cumulative"
+            "value_type": "individual"
           },
           "type": "graph",
           "xaxis": {
@@ -179,7 +183,7 @@
           },
           "yaxes": [
             {
-              "format": "s",
+              "format": "percent",
               "logBase": 1,
               "max": null,
               "min": 0,
@@ -237,9 +241,9 @@
               "calculatedInterval": "2s",
               "datasourceErrors": {},
               "errors": {},
-              "expr": "container_cpu_user_seconds_total:sum_rate_1m:by_group",
+              "expr": "100 * sum(rate(container_cpu_user_seconds_total{image=~\"$image\"}[1m])) by (image,instance)  ",
               "intervalFactor": 2,
-              "legendFormat": "{{group}}",
+              "legendFormat": "{{image}}",
               "metric": "",
               "prometheusLink": "http://core-1.cell-1.ofi.xnood.com:9191/graph#%5B%7B%22expr%22%3A%22container_cpu_user_seconds_total%3Asum_rate_1m%3Aby_group%22%2C%22range_input%22%3A%223601s%22%2C%22end_input%22%3A%222015-8-26%207%3A42%22%2C%22step_input%22%3A%22%22%2C%22stacked%22%3Atrue%2C%22tab%22%3A0%7D%5D",
               "refId": "A",
@@ -248,12 +252,12 @@
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "CPU time spent in user-mode by containers (in seconds per minute)",
+          "title": "CPU time spent in user-mode by containers (%)",
           "tooltip": {
             "msResolution": false,
             "shared": true,
             "sort": 0,
-            "value_type": "cumulative"
+            "value_type": "individual"
           },
           "type": "graph",
           "xaxis": {
@@ -261,7 +265,7 @@
           },
           "yaxes": [
             {
-              "format": "s",
+              "format": "percent",
               "logBase": 1,
               "max": null,
               "min": 0,
@@ -317,13 +321,66 @@
     "type": "timepicker"
   },
   "templating": {
-    "list": []
+    "list": [
+      {
+        "type": "query",
+        "datasource": "prometheus",
+        "refresh": 1,
+        "name": "image",
+        "hide": 0,
+        "options": [
+          {
+            "text": "All",
+            "value": "$__all",
+            "selected": true
+          },
+          {
+            "text": "capgemini/mesos-ui:standalone-latest",
+            "value": "capgemini/mesos-ui:standalone-latest",
+            "selected": false
+          },
+          {
+            "text": "google/cadvisor:latest",
+            "value": "google/cadvisor:latest",
+            "selected": false
+          },
+          {
+            "text": "grafana/grafana",
+            "value": "grafana/grafana",
+            "selected": false
+          },
+          {
+            "text": "prom/container-exporter",
+            "value": "prom/container-exporter",
+            "selected": false
+          },
+          {
+            "text": "prom/node-exporter",
+            "value": "prom/node-exporter",
+            "selected": false
+          }
+        ],
+        "includeAll": true,
+        "multi": true,
+        "query": "label_values(image)",
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ],
+          "tags": []
+        },
+        "regex": "",
+        "label": "",
+        "useTags": false
+      }
+    ]
   },
   "annotations": {
     "list": []
   },
   "schemaVersion": 12,
-  "version": 3,
+  "version": 4,
   "links": [],
   "gnetId": null
 }
