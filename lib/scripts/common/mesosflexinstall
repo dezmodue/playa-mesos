@@ -58,6 +58,11 @@ function configure_slave {
   fi
 }
 
+function install_mesos_deb {
+  curl -fL http://repos.mesosphere.com/ubuntu/pool/main/m/mesos/mesos_1.0.1-2.0.93.ubuntu1404_amd64.deb -o /tmp/mesos.deb
+  dpkg -i /tmp/mesos.deb
+}
+
 function install_apt_source {
   echo "deb http://repos.mesosphere.io/ubuntu/ $1 main" |
     as_root tee /etc/apt/sources.list.d/mesosphere.list
@@ -76,8 +81,9 @@ function install_with_apt {
   as_root echo debconf shared/accepted-oracle-license-v1-1 select true | as_root debconf-set-selections
   as_root echo debconf shared/accepted-oracle-license-v1-1 seen true | as_root debconf-set-selections
   as_root apt-get install -y --force-yes oracle-java8-installer oracle-java8-set-default
-  apt_ zookeeperd zookeeper zookeeper-bin $mesos_rel marathon chronos
+  apt_ zookeeperd zookeeper zookeeper-bin marathon chronos libevent-dev libsvn1 libserf-1-1
   as_root sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker
+  install_mesos_deb
   install_haproxy
   restart_services
 }
