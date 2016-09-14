@@ -83,7 +83,7 @@ function install_with_apt {
 }
 
 function install_docker {
-  as_root curl -sSL https://get.docker.com/ | sh
+  as_root command -v docker >/dev/null 2>&1 || curl -sSL https://get.docker.com/ | sh
 }
 
 function install_haproxy {
