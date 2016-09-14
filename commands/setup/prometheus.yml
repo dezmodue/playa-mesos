@@ -43,6 +43,14 @@ scrape_configs:
         labels:
           group: 'mesos-slave'
 
+    metric_relabel_configs:
+      - source_labels: ['id']
+        regex: '(.+)\.{1}.+'
+        target_label: 'app_id'
+      - source_labels: ['id']
+        regex: '.+\.{1}(.+)'
+        target_label: 'task_id'
+
   - job_name:       'node'
 
     # Override the global default and scrape targets from this job every 5 seconds.
