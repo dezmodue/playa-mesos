@@ -33,7 +33,16 @@ echo
 echo "***********************************"
 echo "***********************************"
 echo
-echo "Login to grafana (http://${IP}:3000) as admin/admin and import the dashboards in 'commands/dashboards/*.json'"
+echo "Login to grafana (http://${IP}:3000) as admin/admin'"
+echo
+echo "Other resources:"
+echo "################"
+echo
+echo "Marathon:       http://${IP}:8080/ui/#/apps"
+echo "Mesos:          http://${IP}:5050/#/"
+echo "Mesos-UI:       http://${IP}:5000/#/"
+echo "Prometheus:     http://${IP}:9090/graph"
+echo "Alert manager:  http://${IP}:9093/#/alerts"
 echo
 echo "***********************************"
 echo "***********************************"
