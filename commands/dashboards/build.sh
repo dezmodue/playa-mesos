@@ -10,14 +10,17 @@ result=`curl -H 'Content-Type: application/json;charset=UTF-8' \
 
 echo "Adding the datasource prometheus"
 sleep 3
-result=`curl -XPOST -i --cookie "$COOKIE_JAR" http://localhost:3000/api/datasources --data-binary @/vagrant/commands/dashboards/grafana_datasources.json -H "Content-Type: application/json"`
+result=`curl -XPOST -i --cookie "$COOKIE_JAR" http://localhost:3000/api/datasources --data-binary @/vagrant/commands/dashboards/datasources.json -H "Content-Type: application/json"`
 if [ $? -ne 0 ];then
   echo "Failed to update data sources"
 fi
 
-# TODO: This doesn't seem to work:
-#curl -XPOST -i --cookie "$COOKIE_JAR" http://localhost:3000/api/dashboards/db --data-binary @/vagrant/commands/dashboards/grafana_cadvisor.json -H "Content-Type: application/json"
-#curl -XPOST -i --cookie "$COOKIE_JAR" http://localhost:3000/api/dashboards/db --data-binary @/vagrant/commands/dashboards/grafana_prometheus.json -H "Content-Type: application/json"
+for i in /vagrant/commands/dashboards/grafana*; do
+  result=`curl -XPOST -i --cookie "$COOKIE_JAR" http://localhost:3000/api/dashboards/db --data-binary @"$i" -H "Content-Type: application/json"`
+  if [ $? -ne 0 ];then
+    echo "Failed to add dashboard $i"
+  fi
+done
 
 echo
 echo "***********************************"
