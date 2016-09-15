@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-sudo apt-get install -y vim screen
+sudo apt-get install -y vim screen jq
 [ -d /opt/binaries ] || mkdir /opt/binaries
 cd /opt/binaries
 echo "Downloading prometheus if needed..."
@@ -36,5 +36,6 @@ cd /vagrant/commands/
 ./dockers            
 ./grafana            
 ./mesos-exporters    
+./marathonapp
 cd dashboards
 ./build.sh

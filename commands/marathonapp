@@ -1,3 +1,10 @@
 #!/usr/bin/env bash
 IP=$(ip addr show eth1 | grep inet\  | awk '{print $2}' | cut -d/ -f1)
-curl -X POST http://${IP}:8080/v2/apps -d @basic-marathon-app.json -H "Content-type: application/json"
+cat basic-marathon-app.json | jq '.id = "my-marathon-app"' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
+echo && sleep 1
+cat basic-marathon-app.json | jq '.id = "/nested/my-marathon-app"' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
+echo && sleep 1
+cat basic-marathon-app.json | jq '.id = "/nested/twice/my-marathon-app"' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
+echo && sleep 1
+cat basic-marathon-app.json | jq '.id = "/nested/twice/thrice/my-marathon-app"' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
+echo
