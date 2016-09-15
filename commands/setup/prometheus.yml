@@ -50,6 +50,20 @@ scrape_configs:
       - source_labels: ['id']
         regex: '.+\.{1}(.+)'
         target_label: 'task_id'
+      # support 3 levels of nesting, should be enough for everyone.
+      # TODO: make this less shit if possible, I cant to regexp anymore
+      - source_labels: ['app_id']
+        regex: '([[:alnum:]-]*)_([[:alnum:]-]*)_([[:alnum:]-]*)_([[:alnum:]-]*)'
+        target_label: 'app_id'
+        replacement: '/${1}/${2}/${3}/${4}'
+      - source_labels: ['app_id']
+        regex: '([[:alnum:]-]*)_([[:alnum:]-]*)_([[:alnum:]-]*)'
+        target_label: 'app_id'
+        replacement: '/${1}/${2}/${3}'
+      - source_labels: ['app_id']
+        regex: '([[:alnum:]-]*)_([[:alnum:]-]*)'
+        target_label: 'app_id'
+        replacement: '/${1}/${2}'
 
   - job_name:       'node'
 
