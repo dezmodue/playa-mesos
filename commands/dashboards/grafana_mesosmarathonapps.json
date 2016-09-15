@@ -1,5 +1,5 @@
 {
-  "id": 4,
+  "id": 3,
   "title": "Mesos & Marathon Apps",
   "tags": [],
   "style": "dark",
@@ -33,7 +33,7 @@
             "current": true,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
@@ -111,7 +111,7 @@
             "current": true,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
@@ -189,7 +189,7 @@
             "current": true,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
@@ -275,7 +275,7 @@
             "current": true,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
@@ -352,7 +352,7 @@
             "current": true,
             "max": false,
             "min": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": true
           },
@@ -447,7 +447,6 @@
     "list": [
       {
         "current": {
-          "selected": true,
           "text": "All",
           "value": "$__all"
         },
@@ -458,64 +457,29 @@
         "name": "app_id",
         "options": [
           {
-            "selected": true,
             "text": "All",
-            "value": "$__all"
+            "value": "$__all",
+            "selected": true
           },
           {
-            "selected": false,
-            "text": "/",
-            "value": "/"
-          },
-          {
-            "selected": false,
             "text": "/nested/my-marathon-app",
-            "value": "/nested/my-marathon-app"
+            "value": "/nested/my-marathon-app",
+            "selected": false
           },
           {
-            "selected": false,
             "text": "/nested/twice/my-marathon-app",
-            "value": "/nested/twice/my-marathon-app"
+            "value": "/nested/twice/my-marathon-app",
+            "selected": false
           },
           {
-            "selected": false,
             "text": "/nested/twice/thrice/my-marathon-app",
-            "value": "/nested/twice/thrice/my-marathon-app"
+            "value": "/nested/twice/thrice/my-marathon-app",
+            "selected": false
           },
           {
-            "selected": false,
             "text": "my-marathon-app",
-            "value": "my-marathon-app"
-          },
-          {
-            "selected": false,
-            "text": "nested_application",
-            "value": "nested_application"
-          },
-          {
-            "selected": false,
-            "text": "nested_my-marathon-app",
-            "value": "nested_my-marathon-app"
-          },
-          {
-            "selected": false,
-            "text": "nested_smelly_russian",
-            "value": "nested_smelly_russian"
-          },
-          {
-            "selected": false,
-            "text": "nested_testing",
-            "value": "nested_testing"
-          },
-          {
-            "selected": false,
-            "text": "smelly-russian",
-            "value": "smelly-russian"
-          },
-          {
-            "selected": false,
-            "text": "testing",
-            "value": "testing"
+            "value": "my-marathon-app",
+            "selected": false
           }
         ],
         "query": "label_values(app_id)",
@@ -529,7 +493,7 @@
   },
   "refresh": "5s",
   "schemaVersion": 12,
-  "version": 17,
+  "version": 1,
   "links": [
     {
       "icon": "cloud",
