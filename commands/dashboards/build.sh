@@ -40,9 +40,23 @@ echo "################"
 echo
 echo "Marathon:       http://${IP}:8080/ui/#/apps"
 echo "Mesos:          http://${IP}:5050/#/"
-echo "Mesos-UI:       http://${IP}:5000/#/"
+echo "CG Mesos-UI:    http://${IP}:5000/#/"
 echo "Prometheus:     http://${IP}:9090/graph"
 echo "Alert manager:  http://${IP}:9093/#/alerts"
+echo "Cadvisor:       http://${IP}:8081/metrics"
+echo "Node exporter:  http://${IP}:9100/metrics"
+echo "Container-exp:  http://${IP}:9104/metrics" 
+echo "Queue-exporter: http://${IP}:4567/metrics"
+echo "Alert Webhook:  http://${IP}:4568/metrics"
+echo "Grafana:        http://${IP}:3000"
+echo "Queue dash:     http://${IP}:3000/dashboard/db/important-queue"
+echo  
+echo
+echo "***********************************"
+echo "To trigger queue backing up and scaling up event run 'echo ko > /tmp/queue'"
+echo "To trigger queue recovery and scaling down event run 'rm /tmp/queue'"
+echo
+echo "Dashboard for queue metrics and autoscaling events 'Important queue'"
 echo
 echo "***********************************"
 echo "***********************************"

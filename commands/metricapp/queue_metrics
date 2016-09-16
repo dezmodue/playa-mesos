@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+require 'sinatra'
+set :bind, '0.0.0.0'
+
+get '/metrics' do
+headers "Content-Type" => 'text/html; charset=utf8'
+status = File.read('/tmp/queue').chomp rescue 'ok'
+# Calculate random numbers (godo or bad depends on the value in /tmp/queue)
+if status == 'ko'
+  scaling_messages_total = rand(5000..30000)
+  scaling_messages_ingress = rand(3000..5000)
+  scaling_messages_egress = scaling_messages_ingress - rand(1000..2500)
+else
+  scaling_messages_total = rand(50..99)
+  scaling_messages_ingress = rand(3000..5000)
+  scaling_messages_egress = scaling_messages_ingress + rand(1..100)
+end
+
+"# HELP scaling_messages_total The total number of messages in the queue.\n
+# TYPE scaling_messages_total gauge\n
+scaling_messages_total{queue_name=\"scaling_queue\"} #{scaling_messages_total}\n
+# HELP scaling_messages_ingress The ingress rate of messages entering the queue.\n
+# TYPE scaling_messages_ingress gauge\n
+scaling_messages_ingress{queue_name=\"scaling_queue\"} #{scaling_messages_ingress}\n
+# HELP scaling_messages_egress The egress rate of messages exiting the queue.\n
+# TYPE scaling_messages_egress gauge\n
+scaling_messages_egress{queue_name=\"scaling_queue\"} #{scaling_messages_egress}\n
+"
+
+end

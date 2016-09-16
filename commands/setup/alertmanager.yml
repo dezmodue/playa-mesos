@@ -5,9 +5,9 @@ global:
   smtp_auth_username: 'alertmanager'
   smtp_auth_password: 'password'
   # The auth token for Hipchat.
-  #hipchat_auth_token: '1234556789'
+  hipchat_auth_token: 'aksd;lasjdlasjdlasjdljasldja'
   # Alternative host for Hipchat.
-  #hipchat_url: 'https://hipchat.foobar.org/'
+  hipchat_url: 'https://somepla.hipchat.com'
 
 # The directory from which notification templates are read.
 templates: 
@@ -25,18 +25,18 @@ route:
   # This way ensures that you get multiple alerts for the same group that start
   # firing shortly after another are batched together on the first 
   # notification.
-  group_wait: 30s
+  group_wait: 10s
 
   # When the first notification was sent, wait 'group_interval' to send a batch
   # of new alerts that started firing for that group.
-  group_interval: 5m
+  group_interval: 15s
 
   # If an alert has successfully been sent, wait 'repeat_interval' to
   # resend them.
-  repeat_interval: 3h 
+  repeat_interval: 30s 
 
   # A default receiver
-  receiver: team-X-mails
+  receiver: team-X-webhook
 
   # All the above attributes are inherited by all child routes and can 
   # overwritten on each.
@@ -47,7 +47,7 @@ route:
   # catch alerts that are related to a list of services.
   - match_re:
       service: ^(.*)$
-    receiver: team-X-mails
+    receiver: team-X-webhook
     # The service has a sub-route for critical alerts, any alerts
     # that do not match, i.e. severity != critical, fall-back to the
     # parent node and are sent to 'team-X-mails'
@@ -94,6 +94,11 @@ inhibit_rules:
 
 
 receivers:
+- name: 'team-X-webhook'
+  webhook_configs:
+  -  send_resolved: false
+     url: 'http://localhost:4568/alert'
+
 - name: 'team-X-mails'
   email_configs:
   - to: 's.sciarrati@gmail.com'
@@ -117,7 +122,7 @@ receivers:
   - service_key: <team-DB-key>
 - name: 'team-X-hipchat'
   hipchat_configs:
-  - auth_token: <auth_token>
-    room_id: 85
+  - auth_token: 'x9284b24bd26bd238b'
+    room_id: 9832492834
     message_format: html
     notify: true

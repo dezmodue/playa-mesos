@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 sudo apt-get install -y vim screen jq
+sudo apt-get install -y ruby1.9.3
+sudo gem install sinatra --no-ri --no-rdoc
 [ -d /opt/binaries ] || mkdir /opt/binaries
 cd /opt/binaries
 echo "Downloading prometheus if needed..."
@@ -26,16 +28,19 @@ echo "Extracting alertmanager if needed..."
 [ -d /opt/binaries/alertmanager-0.4.1.linux-amd64 ] || sudo tar xvfz alertmanager-0.4.1.linux-amd64.tar.gz &> /dev/null
 echo "Extracting node_exporter if needed..."
 [ -d /opt/binaries/node_exporter-0.12.0.linux-amd64 ] || sudo tar xvfz node_exporter-0.12.0.linux-amd64.tar.gz &> /dev/null
-echo "Copying configuration in place"
-sudo cp /vagrant/commands/setup/prometheus.yml /opt/binaries/prometheus-1.0.2.linux-amd64/
-sudo cp /vagrant/commands/setup/alertmanager.yml /opt/binaries/alertmanager-0.4.1.linux-amd64/
+echo "Linking configuration"
+sudo ln -snf /vagrant/commands/setup/prometheus.yml /opt/binaries/prometheus-1.0.2.linux-amd64/prometheus.yml
+sudo ln -snf /vagrant/commands/setup/alertmanager.yml /opt/binaries/alertmanager-0.4.1.linux-amd64/alertmanager.yml
+sudo ln -snf /vagrant/commands/setup/alert.rules /opt/binaries/prometheus-1.0.2.linux-amd64/alert.rules
 sudo chown -R vagrant:vagrant /opt/binaries
 cd /vagrant/commands/
 ./prometheus
 ./containers-metrics 
 ./dockers            
 ./grafana            
-./mesos-exporters    
 ./marathonapp
+./mesos-exporters  
+./autoscaling_metrics  
+./autoscale_webhook.sh
 cd dashboards
 ./build.sh

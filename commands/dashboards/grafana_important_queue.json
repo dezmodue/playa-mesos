@@ -1,0 +1,180 @@
+{
+  "id": 3,
+  "title": "Important queue",
+  "tags": [],
+  "style": "dark",
+  "timezone": "browser",
+  "editable": true,
+  "hideControls": false,
+  "sharedCrosshair": false,
+  "rows": [
+    {
+      "collapse": false,
+      "editable": true,
+      "height": "250px",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": null,
+          "editable": true,
+          "error": false,
+          "fill": 1,
+          "grid": {
+            "threshold1": null,
+            "threshold1Color": "rgba(216, 200, 27, 0.27)",
+            "threshold2": null,
+            "threshold2Color": "rgba(234, 112, 112, 0.22)"
+          },
+          "id": 1,
+          "isNew": true,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [],
+          "nullPointMode": "connected",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "scaling_messages_total",
+              "intervalFactor": 2,
+              "legendFormat": "messages_total",
+              "metric": "",
+              "refId": "A",
+              "step": 2,
+              "hide": false
+            },
+            {
+              "expr": "scaling_messages_egress - scaling_messages_ingress",
+              "intervalFactor": 2,
+              "legendFormat": "net_egress(msg/s)",
+              "metric": "",
+              "refId": "B",
+              "step": 2,
+              "hide": false
+            },
+            {
+              "expr": "scaling_messages_total/(scaling_messages_egress - scaling_messages_ingress)",
+              "intervalFactor": 2,
+              "legendFormat": "time_to_empty_sec",
+              "metric": "",
+              "refId": "C",
+              "step": 2,
+              "hide": false
+            },
+            {
+              "expr": "queueconsumer_scale_up_events",
+              "intervalFactor": 2,
+              "legendFormat": "scale_up.{{marathon_appid_scale_up_event}}",
+              "metric": "queueconsumer_scale_up_events",
+              "refId": "D",
+              "step": 2
+            },
+            {
+              "expr": "queueconsumer_scale_down_events",
+              "intervalFactor": 2,
+              "legendFormat": "scale_down.{{marathon_appid_scale_down_event}}",
+              "metric": "queueconsumer_scale_down_events",
+              "refId": "E",
+              "step": 2
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Important queue",
+          "tooltip": {
+            "msResolution": false,
+            "shared": true,
+            "sort": 0,
+            "value_type": "cumulative"
+          },
+          "type": "graph",
+          "xaxis": {
+            "show": true
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ],
+      "title": "Row"
+    },
+    {
+      "title": "New row",
+      "height": "250px",
+      "editable": true,
+      "collapse": false,
+      "panels": []
+    }
+  ],
+  "time": {
+    "from": "now-10m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "refresh": "10s",
+  "schemaVersion": 12,
+  "version": 0,
+  "links": [],
+  "gnetId": null
+}

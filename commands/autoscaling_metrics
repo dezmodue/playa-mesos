@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+screen -S autoscaling -dm ruby /vagrant/commands/metricapp/queue_metrics

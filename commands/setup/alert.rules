@@ -1,0 +1,40 @@
+#ALERT MesosSlaveDown
+#  IF mesos_slave_uptime_seconds > 0
+#  FOR 1s
+#  LABELS {
+#    severity = "page"
+#  }
+#  ANNOTATIONS {
+#    summary = "Mesos slave {{ $labels.instance }} down",
+#    description = "Mesos slave {{ $labels.instance }} could not be scraped."
+#  }
+
+ALERT ImportantQueueBackingUp
+  IF scaling_messages_total > 5000
+  FOR 5s
+  LABELS {
+    severity = "page",
+    scale_app = "queueconsumer",
+    max_instances = "10",
+    action = "up"
+  }
+  ANNOTATIONS {
+    scale_app = "queueconsumer",
+    summary = "Queue backing up {{ $labels.queue_name }}",
+    description = "{{ $labels.queue_name }} is above 50 (current value: {{ $value }})",
+  }
+
+ALERT ImportantQueueConsumed
+  IF scaling_messages_total < 100
+  FOR 5s
+  LABELS {
+    severity = "page",
+    scale_app = "queueconsumer",
+    max_instances = "10",
+    action = "down"
+  }
+  ANNOTATIONS {
+    scale_app = "queueconsumer",
+    summary = "Queue backing up {{ $labels.queue_name }}",
+    description = "{{ $labels.queue_name }} is above 50 (current value: {{ $value }})",
+  }  

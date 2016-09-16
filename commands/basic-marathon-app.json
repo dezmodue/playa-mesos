@@ -1,10 +1,14 @@
 {
-  "id": "my-marathon-app",
+  "id": "queueconsumer",
   "cmd": "python3 -m http.server 8080",
   "cpus": 0.1,
   "mem": 32,
   "disk": 0,
   "instances": 2,
+  "labels": {
+    "max_instances": "5",
+    "min_instances": "2"
+  },
   "container": {
     "type": "DOCKER",
     "docker": {

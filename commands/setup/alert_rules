@@ -1,0 +1,9 @@
+# Alerts
+
+ALERT QueueBackingUp
+  IF {scaling_messages_total} > 50
+  FOR 1m
+  ANNOTATIONS {
+    summary = "Queue backing up {{ $labels.queue_name }}",
+    description = "{{ $labels.queue_name }} is above 50 (current value: {{ $value }})",
+  }

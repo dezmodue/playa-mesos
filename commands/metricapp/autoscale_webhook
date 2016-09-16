@@ -1,0 +1,153 @@
+#!/usr/bin/env ruby
+# Awful - POC
+# Goal: capture alerts webhooks in the form http://IP:port/alert?app=MARATHON_APP_ID sent by the alert manager
+# Finds where the app lives in marathon and increments + 1 the instances count
+# Keeps track of successful autoscale by exposing metrics:
+# APP_ID counter (number of autoscale done so far)
+# resets the counter for all app once prometheus collects the metric so we track "events" 
+# (depending on the logic for the autoscaling this could be just a counter)
+# TEST: 
+# root@mesos:/vagrant/commands# curl localhost:4568/alert?app=my-marathon-app
+# GlobalState[my-marathon-app]: 1
+# root@mesos:/vagrant/commands# curl localhost:4568/metrics
+# # HELP my_marathon_app_scale_events The scaling events for marathon app id: my_marathon_app
+# # TYPE my_marathon_app_scale_events gauge
+# my_marathon_app_scale_events{marathon_appid_scale_event="my_marathon_app"} 1
+# NOTE: app id name is sanitised as - is invalid in metric name : |
+
+require 'sinatra'
+require 'json'
+require 'net/http'
+require 'uri'
+set :bind, '0.0.0.0'
+set :port, 4568
+
+GlobalStateUp = Hash.new 0
+GlobalStateDown = Hash.new 0
+
+get '/alert' do
+  app = params[:app]
+  response = ""
+  if app.nil?
+  	response
+  else	
+  	# Get all apps from marathon
+    uri = URI.parse("http://10.141.141.10:8080/v2/apps")
+    response = Net::HTTP.get_response(uri)
+  	apps = JSON.load(response.body)
+  	myapp = {}
+    # Find the app definition, strip out the unneded bits and increment the instances count
+  	apps.first[1].each do |a|
+      if a['id'] == "/#{app}" 
+        a.delete_if{ |k,| ! ['id','cmd','cpus','mem','disk','instances','container','healthChecks'].include? k }
+        a['instances'] += 1
+        myapp = a
+        break
+      end  
+  	end	
+    # Post json to marathon
+    uri = URI("http://10.141.141.10:8080/v2/apps/#{app}")
+    http = Net::HTTP.new(uri.host, uri.port)
+    req = Net::HTTP::Put.new(uri.path, 'Content-Type' => 'application/json')
+    req.body = myapp.to_json
+    result = http.request(req)
+    success = JSON.load(result.body)['deploymentId'] || nil
+    # If successful then increment the counter for app X 
+    unless success.nil?
+      GlobalStateUp[app.to_sym].nil? ? GlobalStateUp[app.to_sym] = 1 : GlobalStateUp[app.to_sym] += 1
+      response = "GlobalState[#{app.to_sym}]: #{GlobalStateUp[app.to_sym]}"
+    end    
+    response
+  end
+end
+
+post '/alert' do
+  payload = JSON.parse(request.body.read)  
+  puts "#{payload.inspect}"
+  app = payload['alerts'].first['annotations']['scale_app']
+  action = payload['alerts'].first['labels']['action']
+  response = ""
+  if app.nil?
+    response
+  else  
+    # Get all apps from marathon
+    uri = URI.parse("http://10.141.141.10:8080/v2/apps")
+    response = Net::HTTP.get_response(uri)
+    apps = JSON.load(response.body)
+    myapp = {}
+    # Find the app definition, strip out the unneded bits and increment the instances count
+    apps.first[1].each do |a|
+      if a['id'] == "/#{app}"        
+        min_instances = a['labels']['min_instances'].to_i
+        max_instances = a['labels']['max_instances'].to_i 
+        a.delete_if{ |k,| ! ['id','cmd','cpus','mem','disk','instances','container','healthChecks'].include? k }
+        if action == 'up'
+          puts "INSTANCES: #{a['instances'].to_s}, max: #{max_instances.to_s}"
+          if a['instances'] < max_instances
+            a['instances'] += 1
+            myapp = a
+            break
+          else
+            puts "NOT SCALING UP - MAX INSTANCES REACHED"  
+          end
+        elsif action == 'down'
+          puts "INSTANCES: #{a['instances'].to_s}, min: #{min_instances.to_s}"
+          if a['instances'] > min_instances
+            a['instances'] -= 1
+            myapp = a
+            break
+          else
+            puts "NOT SCALING DOWN - MIN INSTANCES REACHED"  
+          end              
+        end    
+      end  
+    end 
+    # Post json to marathon if we have a valid myapp - (if over the max_instances don't autoscale)
+    if myapp.keys.count > 0
+      uri = URI("http://10.141.141.10:8080/v2/apps/#{app}")
+      http = Net::HTTP.new(uri.host, uri.port)
+      req = Net::HTTP::Put.new(uri.path, 'Content-Type' => 'application/json')
+      req.body = myapp.to_json
+      result = http.request(req)
+      success = JSON.load(result.body)['deploymentId'] || nil
+    # If successful then increment the counter for app X 
+      unless success.nil?
+        action == 'up' ? GlobalStateUp[app.to_sym] += 1 : GlobalStateDown[app.to_sym] += 1
+        response = "GlobalStateUp[#{app.to_sym}]: #{GlobalStateUp[app.to_sym]}"
+        response += "GlobalStateDown[#{app.to_sym}]: #{GlobalStateDown[app.to_sym]}"
+      end    
+      puts response
+    end  
+  end
+end  
+ 
+get '/metrics' do
+  headers "Content-Type" => 'text/html; charset=utf8'
+  response = ""
+  GlobalStateUp.each do |k,v| 
+
+    s = k.to_s.gsub("-", "_")
+    response += "# HELP #{s}_scale_up_events The scaling up events for marathon app id: #{s}\n"
+    response += "# TYPE #{s}_scale_up_events gauge\n"
+    response += "#{s}_scale_up_events{marathon_appid_scale_up_event=\"#{s}\"} #{v}\n"
+  end
+
+  GlobalStateDown.each do |k,v| 
+
+    s = k.to_s.gsub("-", "_")
+    response += "# HELP #{s}_scale_down_events The scaling down events for marathon app id: #{s}\n"
+    response += "# TYPE #{s}_scale_down_events gauge\n"
+    response += "#{s}_scale_down_events{marathon_appid_scale_down_event=\"#{s}\"} #{v}\n"
+  end
+
+
+  # Reset counters once promeheus has collected. 
+  GlobalStateUp.keys.each do |k|
+    GlobalStateUp[k] = 0
+  end  
+  GlobalStateDown.keys.each do |k|
+    GlobalStateDown[k] = 0
+  end  
+  puts response
+  response
+end
