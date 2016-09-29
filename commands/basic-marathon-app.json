@@ -13,7 +13,7 @@
       "portMappings": [
         {
           "containerPort": 8080,
-          "hostPort": 0
+          "servicePort": 1337
         }
       ],
       "parameters": []
