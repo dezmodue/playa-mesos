@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+IP=$(ip addr show eth1 | grep inet\  | awk '{print $2}' | cut -d/ -f1)
+sudo /usr/bin/docker run -d --net host -e "STATUS_ENDPOINT=0.0.0.0:9099" -e "MARATHON_URL=http://$IP:8080" -v /etc/localtime:/etc/localtime:ro --name proxymatic meltwater/proxymatic:latest

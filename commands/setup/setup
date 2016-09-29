@@ -32,10 +32,11 @@ sudo cp /vagrant/commands/setup/alertmanager.yml /opt/binaries/alertmanager-0.4.
 sudo chown -R vagrant:vagrant /opt/binaries
 cd /vagrant/commands/
 ./prometheus
-./containers-metrics 
-./dockers            
-./grafana            
-./mesos-exporters    
+./containers-metrics
+./dockers
+./proxymatic
+./grafana
+./mesos-exporters
 ./marathonapp
 cd dashboards
 ./build.sh
