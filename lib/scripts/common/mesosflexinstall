@@ -83,6 +83,7 @@ function install_with_apt {
   as_root apt-get install -y --force-yes oracle-java8-installer oracle-java8-set-default
   apt_ zookeeperd zookeeper zookeeper-bin marathon chronos libevent-dev libsvn1 libserf-1-1
   as_root sed -i '$acomplete -F _docker docker' /etc/bash_completion.d/docker
+  as_root echo "export MARATHON_ENABLE_FEATURES=task_killing" >> /etc/default/marathon
   install_mesos_deb
   restart_services
 }

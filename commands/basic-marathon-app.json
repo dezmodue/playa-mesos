@@ -5,6 +5,7 @@
   "mem": 32,
   "disk": 0,
   "instances": 2,
+  "taskKillGracePeriodSeconds": 5,
   "container": {
     "type": "DOCKER",
     "docker": {
