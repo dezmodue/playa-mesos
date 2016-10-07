@@ -2,9 +2,9 @@
 IP=$(ip addr show eth1 | grep inet\  | awk '{print $2}' | cut -d/ -f1)
 cat basic-marathon-app.json | jq '.id = "queueconsumer"' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
 echo && sleep 1
-cat basic-marathon-app.json | jq '.id = "/nested/queueconsumer"' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
+cat basic-marathon-app.json | jq '.id = "/nested/queueconsumer" | .container.docker.portMappings[0].servicePort = 1338' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
 echo && sleep 1
-cat basic-marathon-app.json | jq '.id = "/nested/twice/queueconsumer"' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
+cat basic-marathon-app.json | jq '.id = "/nested/twice/queueconsumer" | .container.docker.portMappings[0].servicePort = 1339' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
 echo && sleep 1
-cat basic-marathon-app.json | jq '.id = "/nested/twice/thrice/queueconsumer"' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
+cat basic-marathon-app.json | jq '.id = "/nested/twice/thrice/queueconsumer" | .container.docker.portMappings[0].servicePort = 1340' | curl -s -X POST http://${IP}:8080/v2/apps -d @- -H "Content-type: application/json"
 echo

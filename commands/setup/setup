@@ -35,9 +35,11 @@ sudo ln -snf /vagrant/commands/setup/alert.rules /opt/binaries/prometheus-1.0.2.
 sudo chown -R vagrant:vagrant /opt/binaries
 cd /vagrant/commands/
 ./prometheus
-./containers-metrics 
-./dockers            
-./grafana            
+./containers-metrics
+./dockers
+./proxymatic
+./grafana
+./mesos-exporters
 ./marathonapp
 ./mesos-exporters  
 ./autoscaling_metrics  

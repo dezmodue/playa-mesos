@@ -9,6 +9,7 @@
     "max_instances": "5",
     "min_instances": "2"
   },
+  "taskKillGracePeriodSeconds": 5,
   "container": {
     "type": "DOCKER",
     "docker": {
@@ -17,7 +18,7 @@
       "portMappings": [
         {
           "containerPort": 8080,
-          "hostPort": 0
+          "servicePort": 1337
         }
       ],
       "parameters": []
