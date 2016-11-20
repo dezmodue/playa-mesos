@@ -45,7 +45,7 @@ get '/alert' do
         break
       end  
   	end	
-    # Post json to marathon
+    # Put json to marathon
     uri = URI("http://10.141.141.10:8080/v2/apps/#{app}")
     http = Net::HTTP.new(uri.host, uri.port)
     req = Net::HTTP::Put.new(uri.path, 'Content-Type' => 'application/json')
@@ -102,7 +102,7 @@ post '/alert' do
         end    
       end  
     end 
-    # Post json to marathon if we have a valid myapp - (if over the max_instances don't autoscale)
+    # Put json to marathon if we have a valid myapp - (if over the max_instances don't autoscale)
     if myapp.keys.count > 0
       uri = URI("http://10.141.141.10:8080/v2/apps/#{app}")
       http = Net::HTTP.new(uri.host, uri.port)
